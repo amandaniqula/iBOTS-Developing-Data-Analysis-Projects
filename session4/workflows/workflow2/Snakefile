@@ -1,0 +1,56 @@
+workdir: "../.."
+
+rule combine_arrays:
+    input: 
+        "data/raw/array1.npy",
+        "data/raw/array2.npy"
+    output:
+        "data/processed/combined_array.npy"
+    run:
+        import numpy as np
+        array1 = np.load(input[0])
+        array2 = np.load(input[1])
+        data = np.concatenate((array1, array2))
+        np.save(output[0], data)
+
+rule standardize_combined_arrays:
+    input: 
+        "data/processed/combined_array.npy"
+    output:
+        "data/processed/combined_array_standardized.npy"
+    run:
+        import numpy as np
+        data = np.load(input[0])
+        lenas_variable = (data - np.mean(data)) / np.std(data)
+        np.save(output[0], lenas_variable)
+
+rule normalize_combined_arrays:
+    input:
+        "data/processed/combined_array.npy"
+    output:
+        "data/processed/combined_array_normalized.npy"
+    shell:
+        "python scripts/normalize_array.py {input[0]} {output[0]}"
+
+rule valid_trials:
+    input:
+        "data/raw/session.csv"
+    output:
+        "data/processed/session_valid.csv"
+    run:
+        import pandas as pd
+        df = pd.read_csv(input[0])
+        df_valid = df[df['valid']]
+        df_valid.to_csv(output[0], index = False)
+
+rule correct_response:
+    input:
+        "data/processed/session_valid.csv"
+    output:
+        "data/processed/session_valid_correct_response.csv"
+    run:
+        import pandas as pd
+        df = pd.read_csv(input[0])
+        df_correct = df[df['response'] == 1]
+        df_correct.to_csv(output[0], index=False)
+

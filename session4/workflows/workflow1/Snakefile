@@ -68,19 +68,16 @@ rule combine_two_arrays2:
         "data/raw/array1.npy",
         "data/raw/array2.npy"
     output:
-        "data/processed/combined_array.npy"
+        "data/processed/combined_array.csv"
     run:
         import numpy as np
         import pandas as pd
-
-        np.load(input[0])
-        np.load(input[1])
 
         array1 = np.load(input[0])
         array2 = np.load(input[1])
 
         df = pd.DataFrame({
             "array1": array1,
-            "array1": array2
+            "array2": array2
         })
-        df.to_csv(output[0])
+        df.to_csv(output[0], index=False)
