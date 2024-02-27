@@ -20,7 +20,7 @@ def calculate_median(numbers):
         median = numbers[mid]
     return median
 
-def compute_stat(data, kind=calculate_mean):
+def compute_stat(data, kind="calculate_mean"):
     return kind(data)
 
 def plot_histogram(data, nbins):
